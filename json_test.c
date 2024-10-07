@@ -2,25 +2,17 @@
 #include <stdio.h>
 #include <string.h>
 
-void readfile(char *filename, char *output) {
-  char c;
-  char raw_json[1024] = "";
-  FILE *file_ptr; // can be 0
-  int i = 0;
-  int length = 0;
-  // file_ptr = fopen("mapping.json", "r");
-  file_ptr = fopen(filename, "r");
-  if (file_ptr) { // checks if file_ptr != 0 (been written to by fopen)
-    while ((c=getc(file_ptr)) != EOF) {
-      // printf("%c", c);
-      raw_json[i] = c; 
-      i=i+1;
-    }
-  }
-  // printf("%s", raw_json);
-  strncpy(output, raw_json, 1024);
-  // output = raw_json;
-}
+#define IO_LENGTH 32
+#define ATTRS_LENGTH 32
+#define DESC_LENGTH 256
+#define MAX_MAPPINGS 256
+
+struct map {
+  int type;
+  int io[IO_LENGTH];
+  char desc[DESC_LENGTH];
+  int attrs[ATTRS_LENGTH];
+};
 
 int file_length(char *filename) {
   FILE *file_ptr;
@@ -50,20 +42,28 @@ void read_file_2(char *filename, char *output) {
   }
 }
 
-void read_json(char *raw_json, int raw_length) {
+void read_json(char *raw_json, int raw_length, struct map *mappings) {
   cJSON *json = cJSON_ParseWithLength(raw_json, raw_length);
   // char str[1024];
   // strncpy(str, json->valuestring, 1024);
   const cJSON *map;
+  const cJSON *io_elem;
+  const cJSON *attrs_elem;
   int i=0;
   cJSON_ArrayForEach(map, json) {
-    // cJSON *type = cJSON_GetObjectItemCaseSensitive(map, "type");
-    // printf("Type of mapping %d: %d\n", i, type->valueint);
+    cJSON *type= cJSON_GetObjectItemCaseSensitive(map, "type");
+    cJSON *io= cJSON_GetObjectItemCaseSensitive(map, "io");
     cJSON *desc = cJSON_GetObjectItemCaseSensitive(map, "desc");
-    printf("Description of mapping %d: %s\n", i, desc->valuestring);
+    cJSON *attrs= cJSON_GetObjectItemCaseSensitive(map, "attrs");
+
+    mappings[i].type = type->valueint;
+    int j=0;
+    cJSON_ArrayForEach(io_elem, io) { mappings[i].io[j] = io_elem->valueint; j++; } // can overflow i think, same with lwoer
+    j=0;
+    cJSON_ArrayForEach(attrs_elem, attrs) { mappings[i].attrs[j] = attrs_elem->valueint; j++; }
+    strncpy(mappings[i].desc, desc->valuestring, DESC_LENGTH);
     i++;
   }
-
 }
 
 int main(void) {
@@ -74,6 +74,8 @@ int main(void) {
   printf("JSON file length: %d characters \n", length);
   // printf("%s\n", output);
 
-  read_json(output, length);
+  struct map mappings[MAX_MAPPINGS];
+  read_json(output, length, mappings);
+  printf("%s", mappings[0].desc);
 }
 
