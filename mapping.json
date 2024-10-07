@@ -1,0 +1,56 @@
+[
+  {
+    "type": 1,
+    "io": [42, 308],
+    "desc": "shift",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [44, 304],
+    "desc": "z",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [45, 305],
+    "desc": "x",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [57, 311],
+    "desc": "space",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [1, 315],
+    "desc": "esc",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [103, 544],
+    "desc": "up",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [108, 545],
+    "desc": "down",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [105, 546],
+    "desc": "left",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [106, 547],
+    "desc": "right",
+    "attrs": []
+  }
+]

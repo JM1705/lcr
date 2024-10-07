@@ -1,0 +1,19 @@
+/dev/input/event9 is evremapped keyboard on t430
+
+how to use mux:
+make mux: mux -c amongus
+pipe mux to stdio of script: mux -i amongus | ./a.out
+pipe inputs to mux:
+	intercept "/dev/input/event9" | mux -o amongus
+	intercept "/dev/input/by-path/platform-i8042-serio-2-event-mouse" | mux -o amongus
+
+then just change this line:
+  while (fread(&event, sizeof(event), <numbah waltah>, stdin) == 1) {
+
+so numbah_waltah is at least the amount of inputs
+
+
+resources:
+https://github.com/zvxryb/Linux-Virtual-Joystick
+https://www.kernel.org/doc/html/v4.12/input/gamepad.html
+https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
