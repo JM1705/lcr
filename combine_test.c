@@ -4,7 +4,6 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "cJSON/cJSON.h"
 
 void emit(int fd, int type, int code, int val) { 
   // fd is file descriptor, in tis case it's /dev/uinput 
@@ -37,14 +36,11 @@ void create_device(int fd) {
 
 void main_loop(struct input_event event, int fd) {
   while (fread(&event, sizeof(event), 1, stdin) == 1) {
-    printf("Recieved %d with status %d \n", event.code, event.value);
     if (event.type == EV_KEY && event.code == KEY_Z) {
-      if (event.value == 0 || event.value == 1) {
-        printf("Recieved %d with status %d \n", event.code, event.value);
-        // usleep(100000);
-        emit(fd, EV_KEY, BTN_SOUTH, event.value);
-        // usleep(100000);
-      }
+      printf("Recieved %d with status %d \n", event.code, event.value);
+      // usleep(100000);
+      // emit(fd, EV_KEY, BTN_SOUTH, event.value);
+      // usleep(100000);
     }   
     if (event.type == EV_SYN) {
     emit(fd, EV_SYN, SYN_REPORT, 0);
@@ -53,9 +49,7 @@ void main_loop(struct input_event event, int fd) {
 }
 
 int main(void) {
-  // // https://stackoverflow.com/questions/52550/what-does-the-comma-operator-do
-  // setbuf (stdin, NULL), setbuf(stdout, NULL); // NULL turns off buffering
-  setbuf (stdin, NULL);
+  setbuf (stdin, NULL), setbuf(stdout, NULL);
   struct input_event event;
   int fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK); 
 
@@ -79,7 +73,6 @@ int main(void) {
   // emit(fd, EV_KEY, BTN_NORTH, 0);
   // emit(fd, EV_SYN, SYN_REPORT, 0);
 
-  printf("slept");
   main_loop(event, fd);
 
   usleep(100000);
