@@ -1,18 +1,7 @@
 #include "cJSON/cJSON.h"
 #include <stdio.h>
 #include <string.h>
-
-#define IO_LENGTH 32
-#define ATTRS_LENGTH 32
-#define DESC_LENGTH 256
-#define MAX_MAPPINGS 256
-
-struct map {
-  int type;
-  int io[IO_LENGTH];
-  char desc[DESC_LENGTH];
-  int attrs[ATTRS_LENGTH];
-};
+#include "lcr.h"
 
 int file_length(char *filename) {
   FILE *file_ptr;
@@ -42,7 +31,7 @@ void read_file_2(char *filename, char *output) {
   }
 }
 
-void read_json(char *raw_json, int raw_length, struct map *mappings) {
+int read_json(char *raw_json, int raw_length, struct map *mappings) {
   cJSON *json = cJSON_ParseWithLength(raw_json, raw_length);
   // char str[1024];
   // strncpy(str, json->valuestring, 1024);
@@ -64,18 +53,34 @@ void read_json(char *raw_json, int raw_length, struct map *mappings) {
     strncpy(mappings[i].desc, desc->valuestring, DESC_LENGTH);
     i++;
   }
+  return i;
 }
 
-int main(void) {
-  int length = file_length("mapping.json");
+int load_json(char *filename, struct map *mappings) {
+  int length = file_length(filename);
   char output[length];
   memset(output, '\0', sizeof(length));
-  read_file_2("mapping.json", output);
+  read_file_2(filename, output);
   printf("JSON file length: %d characters \n", length);
-  // printf("%s\n", output);
-
-  struct map mappings[MAX_MAPPINGS];
-  read_json(output, length, mappings);
-  printf("%s", mappings[0].desc);
+  int map_count = read_json(output, length, mappings);
+  for (int i=0; i<map_count; i++) {
+    printf("Description: %s, input keycode: %d output keycode: %d\n", mappings[i].desc, mappings[i].io[0], mappings[i].io[1]);
+  }
+  return map_count;
 }
+
+// int main(void) {
+//   struct map mappings[MAX_MAPPINGS];
+//   load_json("../mapping.json", mappings);
+//   // int length = file_length("mapping.json");
+//   // char output[length];
+//   // memset(output, '\0', sizeof(length));
+//   // read_file_2("mapping.json", output);
+//   // printf("JSON file length: %d characters \n", length);
+//   // // printf("%s\n", output);
+
+//   // struct map mappings[MAX_MAPPINGS];
+//   // read_json(output, length, mappings);
+//   // printf("Description: %s, input keycode: %d\n", mappings[0].desc, mappings[0].io[0]);
+// }
 

@@ -1,20 +1,74 @@
 [
   {
     "type": 1,
-    "io": [42, 308],
+    "io": [22, 308],
+    "desc": "dummy north to make 4 button controller",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [22, 308],
+    "desc": "dummy north",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [22, 310],
+    "desc": "dummy tl",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [22, 310],
+    "desc": "dummy north to make 4 button controller",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [22, 318],
+    "desc": "dummy thumbr",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [22, 317],
+    "desc": "dummy thumbl",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [22, 314],
+    "desc": "dummy select",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [22, 317],
+    "desc": "dummy thumbl",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [22, 316],
+    "desc": "dummy mode",
+    "attrs": []
+  },
+  {
+    "type": 1,
+    "io": [42, 307],
     "desc": "shift",
     "attrs": []
   },
   {
     "type": 1,
     "io": [44, 304],
-    "desc": "z",
+    "desc": "z (south)",
     "attrs": []
   },
   {
     "type": 1,
     "io": [45, 305],
-    "desc": "x",
+    "desc": "x (east)",
     "attrs": []
   },
   {
