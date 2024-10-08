@@ -1,110 +1,66 @@
-[
-  {
-    "type": 1,
-    "io": [22, 308],
-    "desc": "dummy north to make 4 button controller",
-    "attrs": []
+{
+  "device": {
+    "name": "skibididopdopdop",
+    "KEY": [308, 310, 317, 318, 314, 317, 316, 307, 304, 305, 311, 315, 544, 545, 546, 547],
+    "ABS": [],
+    "REL": [],
+    "SW": []
   },
-  {
-    "type": 1,
-    "io": [22, 308],
-    "desc": "dummy north",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [22, 310],
-    "desc": "dummy tl",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [22, 310],
-    "desc": "dummy north to make 4 button controller",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [22, 318],
-    "desc": "dummy thumbr",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [22, 317],
-    "desc": "dummy thumbl",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [22, 314],
-    "desc": "dummy select",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [22, 317],
-    "desc": "dummy thumbl",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [22, 316],
-    "desc": "dummy mode",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [42, 307],
-    "desc": "shift",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [44, 304],
-    "desc": "z (south)",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [45, 305],
-    "desc": "x (east)",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [57, 311],
-    "desc": "space",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [1, 315],
-    "desc": "esc",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [103, 544],
-    "desc": "up",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [108, 545],
-    "desc": "down",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [105, 546],
-    "desc": "left",
-    "attrs": []
-  },
-  {
-    "type": 1,
-    "io": [106, 547],
-    "desc": "right",
-    "attrs": []
-  }
-]
+
+  "mappings": [
+    {
+      "type": 1,
+      "io": [42, 307],
+      "desc": "shift",
+      "attrs": []
+    },
+    {
+      "type": 1,
+      "io": [44, 304],
+      "desc": "z (south)",
+      "attrs": []
+    },
+    {
+      "type": 1,
+      "io": [45, 305],
+      "desc": "x (east)",
+      "attrs": []
+    },
+    {
+      "type": 1,
+      "io": [57, 311],
+      "desc": "space",
+      "attrs": []
+    },
+    {
+      "type": 1,
+      "io": [1, 315],
+      "desc": "esc",
+      "attrs": []
+    },
+    {
+      "type": 1,
+      "io": [103, 544],
+      "desc": "up",
+      "attrs": []
+    },
+    {
+      "type": 1,
+      "io": [108, 545],
+      "desc": "down",
+      "attrs": []
+    },
+    {
+      "type": 1,
+      "io": [105, 546],
+      "desc": "left",
+      "attrs": []
+    },
+    {
+      "type": 1,
+      "io": [106, 547],
+      "desc": "right",
+      "attrs": []
+    }
+  ]
+}

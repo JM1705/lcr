@@ -3,6 +3,6 @@
 
 #include "lcr.h"
 
-int load_json(char *filename, struct map *mappings);
+int load_json(char *filename, struct map *mappings, struct device *gamepad_device);
 
 #endif

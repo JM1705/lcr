@@ -18,19 +18,29 @@ void emit(int fd, int type, int code, int val) {
   write(fd, &ie, sizeof(ie));
 }
 
-void setup_input(int fd, struct map *mappings, int map_count) {
-  ioctl(fd, UI_SET_EVBIT, EV_KEY);
+void setup_input(int fd, struct device gamepad_device) {
   printf("Adding buttons to virtual uinput device\n");
-  for (int i=0; i<map_count; i++) {
-    printf("%d ", mappings[i].io[1]);
-    usleep(10000);
-    ioctl(fd, UI_SET_KEYBIT, mappings[i].io[1]);
-  }
+  int key_empty = 1;
+  int abs_empty = 1;
+  int rel_empty = 1;
+  int sw_empty = 1;
+  for (int i=0; i<KEY_ASSIGN_MAX; i++) { if(gamepad_device.key[i]) {key_empty = 0; }}
+  for (int i=0; i<KEY_ASSIGN_MAX; i++) { if(gamepad_device.abs[i]) {abs_empty = 0; }}
+  for (int i=0; i<KEY_ASSIGN_MAX; i++) { if(gamepad_device.rel[i]) {rel_empty = 0; }}
+  for (int i=0; i<KEY_ASSIGN_MAX; i++) { if(gamepad_device.sw[i]) {sw_empty = 0; }}
+  if (!key_empty) {ioctl(fd, UI_SET_EVBIT, EV_KEY); }
+  if (!abs_empty) {ioctl(fd, UI_SET_EVBIT, EV_ABS); }
+  if (!rel_empty) {ioctl(fd, UI_SET_EVBIT, EV_REL); }
+  if (!sw_empty) {ioctl(fd, UI_SET_EVBIT, EV_SW); }
+  for (int i=0; i<KEY_ASSIGN_MAX; i++) { ioctl(fd, UI_SET_KEYBIT, gamepad_device.key[i]); }
+  for (int i=0; i<KEY_ASSIGN_MAX; i++) { ioctl(fd, UI_SET_ABSBIT, gamepad_device.abs[i]); }
+  for (int i=0; i<KEY_ASSIGN_MAX; i++) { ioctl(fd, UI_SET_RELBIT, gamepad_device.rel[i]); }
+  for (int i=0; i<KEY_ASSIGN_MAX; i++) { ioctl(fd, UI_SET_SWBIT, gamepad_device.sw[i]); }
   printf("\n");
   // ioctl(fd, UI_SET_KEYBIT, BTN_NORTH);
 }
 
-void create_device(int fd) {  
+void create_device(int fd, struct device gamepad_device) {  
   struct uinput_setup usetup;
   memset(&usetup, 0, sizeof(usetup));
   // usetup.id.bustype = BUS_VIRTUAL;
@@ -40,7 +50,7 @@ void create_device(int fd) {
   usetup.id.bustype = BUS_USB;
   usetup.id.vendor = 0x045e;
   usetup.id.product = 0x02ea;
-  strcpy(usetup.name, "Skibidi ahh Xbox One Controller");
+  strcpy(usetup.name, gamepad_device.name);
 
   ioctl(fd, UI_DEV_SETUP, &usetup);
   ioctl(fd, UI_DEV_CREATE);
@@ -72,14 +82,15 @@ void main_loop(struct input_event event, int fd, struct map *mappings, int map_c
 
 int main(void) {
   struct map mappings[MAX_MAPPINGS];
-  int map_count = load_json("../mapping.json", mappings);
+  struct device gamepad_device;
+  int map_count = load_json("../mapping.json", mappings, &gamepad_device);
 
   setbuf (stdin, NULL);
   struct input_event event;
   int fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK); 
 
-  setup_input(fd, mappings, map_count);
-  create_device(fd);
+  setup_input(fd, gamepad_device);
+  create_device(fd, gamepad_device);
 
   usleep(100000);
   printf("Initialised\n");
