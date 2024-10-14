@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "lcr.h"
+#include <linux/uinput.h>
 
 int file_length(char *filename) {
   FILE *file_ptr;
@@ -50,14 +51,19 @@ int read_json(char *raw_json, int raw_length, struct map *mappings, struct devic
   cJSON *abs = cJSON_GetObjectItemCaseSensitive(device, "ABS");
   cJSON *rel = cJSON_GetObjectItemCaseSensitive(device, "REL");
   cJSON *sw = cJSON_GetObjectItemCaseSensitive(device, "SW");
+
   int i=0;
   cJSON_ArrayForEach(code, key) { gamepad_device->key[i] = code->valueint; i++; }
+  gamepad_device ->key_length = i;
   i=0;
   cJSON_ArrayForEach(code, abs) { gamepad_device->abs[i] = code->valueint; i++; }
+  gamepad_device ->abs_length = i;
   i=0;
   cJSON_ArrayForEach(code, rel) { gamepad_device->rel[i] = code->valueint; i++; }
+  gamepad_device ->rel_length = i;
   i=0;
   cJSON_ArrayForEach(code, sw) { gamepad_device->sw[i] = code->valueint; i++; }
+  gamepad_device ->sw_length = i;
   
   // Read the "mappings" section
   i=0;
