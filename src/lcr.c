@@ -107,22 +107,30 @@ void keys2abs(struct input_event event, int fd, struct map *mapping) {
 void incrementabs(struct input_event event, int fd, struct map *mapping) {
   if (event.type == EV_KEY && (event.code == mapping->io[0] || event.code == mapping->io[1])) {
     if (event.value == 1) {
+      int now_mult = mapping->status[0];
+
       if (event.code == mapping->io[0]) {
-        mapping->status[0] += mapping->attrs[2]; // increment
+        now_mult += 1; //increment
       }
       if (event.code == mapping->io[1]) {
-        mapping->status[0] -= mapping->attrs[2]; // decrement
+        now_mult -= 1; //decrement
+      }   
+
+      int now_val = now_mult*mapping->attrs[2];
+      if (now_val <= mapping->attrs[1] && now_val >= mapping->attrs[0]) {
+        mapping->status[0] = now_mult;
+      }
+      else {
+        if (now_val > mapping->attrs[1]) {
+          now_val = mapping->attrs[1];
+        }
+        if (now_val < mapping->attrs[0]) {
+          now_val = mapping->attrs[0];
+        }
       }
 
-      // make sure it doesn't go out of bounds
-      if (mapping->status[0] > mapping->attrs[1]) {
-        mapping->status[0] = mapping->attrs[1];
-      }
-      if (mapping->status[0] < mapping->attrs[0]) {
-        mapping->status[0] = mapping->attrs[0];
-      }
-      printf("value is now %d for %d\n", mapping->status[0], mapping->io[2]);
-      emit(fd, EV_ABS, mapping->io[2], mapping->status[0]);
+      printf("value is now %d for %d\n", now_val, mapping->io[2]);
+      emit(fd, EV_ABS, mapping->io[2], now_val);
     }
   }
 }
