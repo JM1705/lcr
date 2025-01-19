@@ -18,7 +18,7 @@ void emit(int fd, int type, int code, int val) {
   ie.time.tv_sec = 0;
   ie.time.tv_usec = 0;
   write(fd, &ie, sizeof(ie));
-  usleep(SLEEP_US);
+  // usleep(SLEEP_US);
 }
 
 void setup_input(int fd, struct device gamepad_device) {
@@ -153,7 +153,7 @@ void main_loop(struct input_event event, int fd, struct map *mappings, int map_c
       mappings[i] = mapping;
     }
     if (event.type == EV_SYN) {
-    emit(fd, EV_SYN, SYN_REPORT, 0);
+      emit(fd, EV_SYN, SYN_REPORT, 0);
     }
   }
 }
@@ -183,7 +183,8 @@ void init_maps(int fd, struct map *mappings) {
 int main(void) {
   struct map mappings[MAX_MAPPINGS];
   struct device gamepad_device;
-  int map_count = load_json("../mapping.json", mappings, &gamepad_device);
+  int map_count = load_json("../mappings/rivals.json", mappings, &gamepad_device);
+  printf("map count: %d\n", map_count);
 
   setbuf (stdin, NULL);
   struct input_event event;
