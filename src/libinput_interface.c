@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-// #include <string.h>
+#include <string.h>
+#include <ctype.h>
 
 #define BUFSIZE 1024
 #define MAX_ITEM_LENGTHS 256
@@ -83,14 +84,42 @@ char* get_command_output(char *command) {
   return dest;
 }
 
+int find_next_blank_gap(char *str, int start) {
+  int len = strlen(str);
+  for (int i=start; i<len; i++) {
+    if (str[i] == '\n') {
+      int offset = 1;
+      while (str[i+offset] != '\0') {
+        if (str[i+offset] == '\n') return i;
+        // if (str[i+offset] == '\n' && str[i+offset+1] != '\0') return i;
+        else if (isblank(str[i+offset])) offset ++;
+        else break;
+      }
+    }
+  }
+  return -1;
+}
+
 struct LIBINPUT_DEVICE* parse_libinput_list(char *libinput_list) {
-  printf("%s", libinput_list);
-  struct LIBINPUT_DEVICE *devices = malloc(sizeof(struct LIBINPUT_DEVICE)*MAX_DEVICE_COUNT);
-  return devices;
+  int len = strlen(libinput_list);
+
+  int current_pos = 0;
+  int device_count = 0;
+  while (1) {
+    int next_blank = find_next_blank_gap(libinput_list, current_pos);
+    if (next_blank == -1) break;
+    device_count ++;
+    current_pos = next_blank+1;
+  }
+  printf("device count: %d\n", device_count);
+
+  
+  // return devices;
 }
 
 int main() {
-  char *dest = get_command_output("libinput list-devices");
+  // char *dest = get_command_output("libinput list-devices");
+  char *dest = get_command_output("cat ../testdata/libinput_list-devices");
   parse_libinput_list(dest);
   return 0;
 }

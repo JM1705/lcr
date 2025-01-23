@@ -1,0 +1,2 @@
+runtime:
+libinput-tools or smth (libinput list-devices)
