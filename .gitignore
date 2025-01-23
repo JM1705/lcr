@@ -3,3 +3,4 @@ end_env.sh
 prep_env.sh
 mappings/*
 ui/lcr/build
+testing/
