@@ -5,3 +5,6 @@ mappings/*
 ui/lcr/build
 testing/
 testdata/
+bin/
+build/
+*.o

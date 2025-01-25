@@ -2,28 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-// #include <regex.h>
+#include "libinput_interface.h"
 
-#define BUFSIZE 1024
-#define MAX_ITEM_LENGTHS 256
-#define MAX_DEVICE_STR_LENGTH 4096
 
 typedef struct BLOCK {
   char charbuf[BUFSIZE+1];
   void *next; // ptr to next block 
   void *before;
 } BLOCK;
-
-// to add more fields, add here and add at the line where it says:
-// if (strcmp(attr, "Device")==0) strcpy(dev->name, field);
-
-typedef struct LIBINPUT_DEVICE {
-  char name[MAX_ITEM_LENGTHS];
-  char path[MAX_ITEM_LENGTHS];
-  char group[MAX_ITEM_LENGTHS];
-  char seat[MAX_ITEM_LENGTHS];
-  char capabilities[MAX_ITEM_LENGTHS];
-} DEVICE;
 
 int min(int a, int b) {
   if (a <= b) {
@@ -39,7 +25,7 @@ char* get_command_output(char *command) {
   int len = 0;
 
   // store output progressively in 1kb linked buffers
-  char outchar;
+  char outchar = ' '; // assign dummy
   while (outchar != EOF) {
     for (int i=0; i<BUFSIZE; i++) {
       outchar = fgetc(fp);
@@ -60,7 +46,7 @@ char* get_command_output(char *command) {
   // consolidate output stored in linked buffers into a char string
   char *dest = malloc(sizeof(char)*len);
   int buf_count = 0;
-  int charcount = 0;
+  // int charcount = 0;
   int left = len;
   currentbuf = mainbuf;
   while (1) {
@@ -120,7 +106,7 @@ char **get_libinput_list_str(char *libinput_list, int* dividers, int divider_cou
   int pos = 0;
   int count = 0;
   int division = 0;
-  int marker = 0;
+  // int marker = 0;
  
   strs = malloc(sizeof(char*)*divider_count);
   for (int i=0; i<(divider_count); i++) strs[i] = malloc(sizeof(char)*MAX_DEVICE_STR_LENGTH);
@@ -163,7 +149,7 @@ struct LIBINPUT_DEVICE* parse_libinput_entry(char *libinput_entry) {
   char *attr = malloc(0);
 
   char fieldbuffer[len+1];
-  char fieldlen = 0;
+  int fieldlen = 0;
   char *field = malloc(0);
   
   for (int i=0; i<(len+1); i++) {
@@ -187,7 +173,7 @@ struct LIBINPUT_DEVICE* parse_libinput_entry(char *libinput_entry) {
       continue;
     }
     if (found == 1 && libinput_entry[i] != ' ') found = 2;
-    if (libinput_entry[i] == ':') {
+    if (libinput_entry[i] == ':' && found == 0) {
       free(attr);
       attr = malloc(sizeof(char)*(attrlen+1));
       strncpy(attr, attrbuffer, attrlen);
@@ -209,8 +195,8 @@ struct LIBINPUT_DEVICE* parse_libinput_entry(char *libinput_entry) {
   return dev;
 }
 
-struct LIBINPUT_DEVICE **parse_libinput_list(char *libinput_list) {
-  int len = strlen(libinput_list);
+struct LIBINPUT_DEVICES_ARRAY *parse_libinput_list(char *libinput_list) {
+  // int len = strlen(libinput_list);
   int divider_count = get_libinput_list_count(libinput_list);
   int *dividers = find_libinput_list_gaps(libinput_list, divider_count);
   char **dev_strs = get_libinput_list_str(libinput_list, dividers, divider_count);
@@ -218,17 +204,14 @@ struct LIBINPUT_DEVICE **parse_libinput_list(char *libinput_list) {
   for (int i=0; i<divider_count; i++) {
     devices[i] = parse_libinput_entry(dev_strs[i]);
   }
-  return devices;
+  struct LIBINPUT_DEVICES_ARRAY *devarr = malloc(sizeof(LIBINPUT_DEVICES_ARRAY));
+  devarr->devices = devices;
+  devarr->device_count = divider_count;
+  return devarr;
 }
 
-int main() {
-  // char *dest = get_command_output("libinput list-devices");
-  char *dest = get_command_output("cat ../testdata/libinput_list-devices");
-  struct LIBINPUT_DEVICE **devices = parse_libinput_list(dest);
-  printf("Device name is %s\n", devices[0]->name);
-  printf("Device path is %s\n", devices[0]->path);
-  printf("Device group is %s\n", devices[0]->group);
-  printf("Device seat is %s\n", devices[0]->seat);
-  printf("Device capabilties is %s\n", devices[0]->capabilities);
-  return 0;
+struct LIBINPUT_DEVICES_ARRAY *get_devices() {
+  char *dest = get_command_output("libinput list-devices");
+  struct LIBINPUT_DEVICES_ARRAY *devarr = parse_libinput_list(dest);
+  return devarr;
 }
