@@ -1,2 +1,2 @@
 runtime:
-libinput-tools or smth (libinput list-devices)
+libinput-tools or whatever provides libinput list-devices on your distro

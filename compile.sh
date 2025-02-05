@@ -5,35 +5,32 @@ if [ ! ${PWD##*/} == "lcr" ]; then
   exit
 fi
 
-if [ ! -d "build" ]; then
-  mkdir build/
-fi
 if [ ! -d "bin" ]; then
   mkdir bin/
 fi
 
+cd bin
+
 echo "compiling runner"
-cd build/
-gcc -g -Wall -c ../src/libinput_interface.c
-gcc -g -Wall -c ../src/runner.c
-
-cd ../bin/
 gcc -g -o runner\
-  ../build/libinput_interface.o\
-  ../build/runner.o
+  ../src/runner.c\
+  ../src/libinput_interface.c\
+  ../src/utils.c
 
-cd ..
-
-echo "compiling remapper"
-cd build/
-gcc -g -Wall -c ../src/cJSON/cJSON.c
-gcc -g -Wall -c ../src/json_io.c
-gcc -g -Wall -c ../src/lcr.c
-
-cd ../bin/
+echo "compiling lcr (main program)"
 gcc -g -o lcr\
-  ../build/cJSON.o\
-  ../build/json_io.o\
-  ../build/lcr.o
+  ../src/lcr.c\
+  ../src/libinput_interface.c\
+  ../src/utils.c\
+  ../src/json_io.c\
+  ../src/direct.c\
+  ../src/mapping_funcs.c\
+  ../src/cJSON/cJSON.c
 
-echo "the compiled binar(ies) have been output to lcr/bin"
+# echo "compiling json reader"
+# gcc -g -o json_io\
+#   ../src/json_io.c\
+#   ../src/utils.c\
+#   ../src/cJSON/cJSON.c
+
+

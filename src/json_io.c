@@ -1,39 +1,20 @@
-#include "cJSON/cJSON.h"
 #include <stdio.h>
 #include <string.h>
-#include "lcr.h"
 #include <linux/uinput.h>
+#include <stdlib.h>
+#include "json_io.h"
+#include "cJSON/cJSON.h"
+#include "utils.h"
 
-int file_length(char *filename) {
-  FILE *file_ptr;
-  file_ptr = fopen(filename, "r");
-  int len=0;
-  char c;
-  if (file_ptr) {
-    while ((c=getc(file_ptr)) != EOF) {
-      len++;
-    }
-    len++;
-  }
-  return len;
-}
 
-void read_file_2(char *filename, char *output) {
-  FILE *file_ptr;
-  int size = 0;
-  char c;
-  file_ptr = fopen(filename, "r");
-  if (file_ptr) {
-    while ((c=getc(file_ptr)) != EOF) {
-      output[size] = c;
-      size++;
-    }
-    output[size] = '\0';
-  }
-}
-
-int read_json(char *raw_json, int raw_length, struct map *mappings, struct device *gamepad_device) {
-  cJSON *json = cJSON_ParseWithLength(raw_json, raw_length);
+// int read_json(char *raw_json, struct map* mappings, struct output_device *out_dev) {
+struct maps_config* read_json(char *raw_json) {
+  struct maps_config* config = malloc(sizeof(struct maps_config));
+  config->out_dev = malloc(sizeof(struct output_device));
+  config->mappings = malloc(sizeof(struct map*)*MAX_MAPPINGS);
+  for (int i=0; i<MAX_MAPPINGS; i++) config->mappings[i] = malloc(sizeof(struct map));
+  
+  cJSON *json = cJSON_Parse(raw_json);
   // char str[1024];
   // strncpy(str, json->valuestring, 1024);
   const cJSON *mapping;
@@ -41,31 +22,43 @@ int read_json(char *raw_json, int raw_length, struct map *mappings, struct devic
   const cJSON *attrs_elem;
   const cJSON *code;
 
-  cJSON *device = cJSON_GetObjectItemCaseSensitive(json, "device");
+  cJSON *output = cJSON_GetObjectItemCaseSensitive(json, "output");
+  cJSON *inputs = cJSON_GetObjectItemCaseSensitive(json, "inputs");
   cJSON *maps = cJSON_GetObjectItemCaseSensitive(json, "mappings");
 
-  // Read the "device" section
-  strncpy(gamepad_device->name, cJSON_GetObjectItemCaseSensitive(device, "name")->valuestring, DEV_NAME_MAX);
+  // read output info
+  strncpy(config->out_dev->name, cJSON_GetObjectItemCaseSensitive(output, "name")->valuestring, DEV_NAME_MAX);
 
-  cJSON *key = cJSON_GetObjectItemCaseSensitive(device, "KEY");
-  cJSON *abs = cJSON_GetObjectItemCaseSensitive(device, "ABS");
-  cJSON *rel = cJSON_GetObjectItemCaseSensitive(device, "REL");
-  cJSON *sw = cJSON_GetObjectItemCaseSensitive(device, "SW");
+  cJSON *key = cJSON_GetObjectItemCaseSensitive(output, "KEY");
+  cJSON *abs = cJSON_GetObjectItemCaseSensitive(output, "ABS");
+  cJSON *rel = cJSON_GetObjectItemCaseSensitive(output, "REL");
+  cJSON *sw = cJSON_GetObjectItemCaseSensitive(output, "SW");
 
   int i=0;
-  cJSON_ArrayForEach(code, key) { gamepad_device->key[i] = code->valueint; i++; }
-  gamepad_device ->key_length = i;
+  cJSON_ArrayForEach(code, key) { config->out_dev->key[i] = code->valueint; i++; }
+  config->out_dev->key_length = i;
   i=0;
-  cJSON_ArrayForEach(code, abs) { gamepad_device->abs[i] = code->valueint; i++; }
-  gamepad_device ->abs_length = i;
+  cJSON_ArrayForEach(code, abs) { config->out_dev->abs[i] = code->valueint; i++; }
+  config->out_dev->abs_length = i;
   i=0;
-  cJSON_ArrayForEach(code, rel) { gamepad_device->rel[i] = code->valueint; i++; }
-  gamepad_device ->rel_length = i;
+  cJSON_ArrayForEach(code, rel) { config->out_dev->rel[i] = code->valueint; i++; }
+  config->out_dev->rel_length = i;
   i=0;
-  cJSON_ArrayForEach(code, sw) { gamepad_device->sw[i] = code->valueint; i++; }
-  gamepad_device ->sw_length = i;
+  cJSON_ArrayForEach(code, sw) { config->out_dev->sw[i] = code->valueint; i++; }
+  config->out_dev->sw_length = i;
   
-  // Read the "mappings" section
+  // read input info
+  config->input_count = cJSON_GetArraySize(inputs);
+  config->inputs = malloc(sizeof(char*)*config->input_count);
+  for (int i=0; i<config->input_count; i++) config->inputs[i] = malloc(sizeof(char)*DEV_NAME_MAX);
+  cJSON *input = NULL;
+  i=0;
+  cJSON_ArrayForEach(input, inputs) {
+    strcpy(config->inputs[i], input->valuestring);
+    i++;
+  }
+  
+  // read mapping info
   i=0;
   cJSON_ArrayForEach(mapping, maps) {
     cJSON *type= cJSON_GetObjectItemCaseSensitive(mapping, "type");
@@ -73,37 +66,34 @@ int read_json(char *raw_json, int raw_length, struct map *mappings, struct devic
     cJSON *desc = cJSON_GetObjectItemCaseSensitive(mapping, "desc");
     cJSON *attrs= cJSON_GetObjectItemCaseSensitive(mapping, "attrs");
 
-    mappings[i].type = type->valueint;
+    config->mappings[i]->type = type->valueint;
     int j=0;
-    cJSON_ArrayForEach(io_elem, io) { mappings[i].io[j] = io_elem->valueint; j++; } // can overflow i think, same with lwoer
+    cJSON_ArrayForEach(io_elem, io) { config->mappings[i]->io[j] = io_elem->valueint; j++; } // can overflow i think, same with lwoer
     j=0;
-    cJSON_ArrayForEach(attrs_elem, attrs) { mappings[i].attrs[j] = attrs_elem->valueint; j++; }
-    strncpy(mappings[i].desc, desc->valuestring, DESC_LENGTH);
+    cJSON_ArrayForEach(attrs_elem, attrs) { config->mappings[i]->attrs[j] = attrs_elem->valueint; j++; }
+    strncpy(config->mappings[i]->desc, desc->valuestring, DESC_LENGTH);
     i++;
   }
+  config->map_count = i;
 
-  return i;
+  // return i;
+  return config;
 }
 
-int load_json(char *filename, struct map *mappings, struct device *gamepad_device) {
-  int length = file_length(filename);
-  char output[length];
-  memset(output, '\0', sizeof(length));
-  read_file_2(filename, output);
-  printf("JSON file length: %d characters \n", length);
-  int map_count = read_json(output, length, mappings, gamepad_device);
-  for (int i=0; i<map_count; i++) {
-    printf("Description: %s, input keycode: %d output keycode: %d\n", mappings[i].desc, mappings[i].io[0], mappings[i].io[1]);
-  }
-  return map_count;
+struct maps_config* load_json(char *filename) {
+  FILE* fp = fopen(filename, "r");
+  char* file_contents = read_file(fp);
+  struct maps_config* config = read_json(file_contents);
+  // printf("Inputs: \n");
+  // for (int i=0; i<config->input_count; i++) {
+  //   printf("%s\n", config->inputs[i]);
+  // }
+  // for (int i=0; i<config->map_count; i++) {
+  //   printf("Description: %s, input keycode: %d output keycode: %d\n", config->mappings[i]->desc, config->mappings[i]->io[0], config->mappings[i]->io[1]);
+  // }
+  return config;
 }
 
-// int main(void) {
-//   struct map mappings[MAX_MAPPINGS];
-//   struct device gamepad_device;
-//   load_json("../mapping.json", mappings, &gamepad_device);
-//   for (int i=0; i<KEY_ASSIGN_MAX; i++) {
-//     printf("%d \n", gamepad_device.key[i]);
-//   }
+// int main() {
+//   struct maps_config *config = load_json("mappings/testmap.json");
 // }
-
