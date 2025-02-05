@@ -29,7 +29,6 @@ For each map, there are 4 attributes:
   "attrs" - More attributes, where the function depends on the mapping operation.   
 
 ### Map operations
-
 1. maps a key press directly to a button  
   io[0]: keycode to map from  
   io[1]: keycode to map to  
@@ -39,7 +38,8 @@ For each map, there are 4 attributes:
   io[0]: keycode to map from  
   io[1]: keycode to map to  
   attrs[0]: device index from "inputs" section above to map  
-  attrs[1]: max value for axis (0 is always the minimum)
+  attrs[1]: minimum value for axis  
+  attrs[2]: maximum value for axis  
 
 3. maps 2 keys directly to an axis field, like pressing on the ends on one of those springed seesaw things at playgrounds  
   io[0]: keycode for high  
@@ -60,7 +60,6 @@ For each map, there are 4 attributes:
 
 
 ## Explanation of the source files:
-
 lcr.c - the main file  
 libinput_interface.c - used for parsing the output of libinput list-devices  
 json_io.c - used for parsing the JSON configuration files  
@@ -69,3 +68,6 @@ utils.c - random utility functions
 mapping_funcs.c - functions for mapping inputs into gamepad inputs  
 
 cJSON/cJSON.c is used for JSON configuration parsing  
+
+## TODO:
+Implement EV_ABS event options

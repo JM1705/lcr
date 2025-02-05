@@ -8,7 +8,7 @@
   },
 
   "inputs": [
-    "CHANGEME (Device name from libinput list-devices goes here)"
+    "CHANGEME (the device name to map from libinput list-devices)"
   ],
   
   "mappings": [
@@ -16,13 +16,13 @@
       "type": 3,
       "io": [105, 106, 0],
       "desc": "left right -> xbox left stick horizontal (ABS_X)",
-      "attrs": [0, -32767,32767]
+      "attrs": [0, -32768,32767]
     },
     {
       "type": 3,
       "io": [103, 108, 1],
       "desc": "up down -> xbox left stick vertical (ABS_Y)",
-      "attrs": [0, -32767,32767]
+      "attrs": [0, -32768,32767]
     },
     {
       "type": 1,
@@ -52,13 +52,13 @@
       "type": 2,
       "io": [44, 2],
       "desc": "z -> xbox left trigger as a binary signal (ABS_Z)",
-      "attrs": [0, 1000]
+      "attrs": [0, -32768, 32767]
     },
     {
       "type": 4,
       "io": [13, 12, 3],
       "desc": "- = -> xbox right joystck horizontal as incremental signal (ABS_RX)",
-      "attrs": [0, -32767, 32767, 8192]
+      "attrs": [0, -32768, 32767, 8192]
     }
   ]
 }
