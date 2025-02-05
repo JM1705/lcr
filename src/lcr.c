@@ -185,7 +185,7 @@ void init_maps(int fd, struct map *mappings) {
 int main(void) {
   struct map mappings[MAX_MAPPINGS];
   struct device gamepad_device;
-  int map_count = load_json("../mappings/rivals.json", mappings, &gamepad_device);
+  int map_count = load_json("mappings/rivals.json", mappings, &gamepad_device);
   printf("map count: %d\n", map_count);
 
   setbuf (stdin, NULL);

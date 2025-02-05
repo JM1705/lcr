@@ -14,11 +14,11 @@ fi
 
 echo "compiling runner"
 cd build/
-gcc -Wall -c ../src/libinput_interface.c
-gcc -Wall -c ../src/runner.c
+gcc -g -Wall -c ../src/libinput_interface.c
+gcc -g -Wall -c ../src/runner.c
 
 cd ../bin/
-gcc -o runner\
+gcc -g -o runner\
   ../build/libinput_interface.o\
   ../build/runner.o
 
@@ -26,12 +26,12 @@ cd ..
 
 echo "compiling remapper"
 cd build/
-gcc -Wall -c ../src/cJSON/cJSON.c
-gcc -Wall -c ../src/json_io.c
-gcc -Wall -c ../src/lcr.c
+gcc -g -Wall -c ../src/cJSON/cJSON.c
+gcc -g -Wall -c ../src/json_io.c
+gcc -g -Wall -c ../src/lcr.c
 
 cd ../bin/
-gcc -o lcr\
+gcc -g -o lcr\
   ../build/cJSON.o\
   ../build/json_io.o\
   ../build/lcr.o

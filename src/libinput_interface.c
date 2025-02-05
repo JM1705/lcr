@@ -212,6 +212,7 @@ struct LIBINPUT_DEVICES_ARRAY *parse_libinput_list(char *libinput_list) {
 
 struct LIBINPUT_DEVICES_ARRAY *get_devices() {
   char *dest = get_command_output("libinput list-devices");
+  // char *dest = get_command_output("cat testdata/libinput_list-devices");
   struct LIBINPUT_DEVICES_ARRAY *devarr = parse_libinput_list(dest);
   return devarr;
 }
