@@ -7,8 +7,6 @@
 #include "libinput_interface.h"
 #include "json_io.h"
 
-#define POLL_TIMEOUT 5000
-
 // int main_loop(char **device_paths, int device_count, int (*loop_cb)(int, int, struct input_event*)) {
 int main_loop(struct maps_config* config, LIBINPUT_DEVICES_ARRAY* devarr, int* selected_device_indices, int fd, int (*loop_cb)(struct maps_config*, LIBINPUT_DEVICES_ARRAY*, int*, int, struct input_event*, int fd)) {
   int input_size = sizeof(struct input_event);
@@ -28,9 +26,9 @@ int main_loop(struct maps_config* config, LIBINPUT_DEVICES_ARRAY* devarr, int* s
 
   while (1) {
     // poll device, -1 ret will mean can't poll
-    ret_poll = poll(dev_fds, config->input_count, POLL_TIMEOUT);
+    ret_poll = poll(dev_fds, config->input_count, -1);
 
-    if (ret_poll <=0) {printf("Cannot poll devices (this seems to happen randomly?)\n"); continue;}
+    if (ret_poll <=0) {printf("Cannot poll devices (this happens after timeout?)\n"); continue;}
 
     // check which device is updated
     updated_device = -1;

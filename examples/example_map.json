@@ -1,0 +1,64 @@
+{
+  "output": {
+    "name": "Example LCR controller, emulates an xbox controller",
+    "KEY": [304, 305, 307, 308, 310, 311, 314, 315, 316, 317, 318],
+    "ABS": [0,1,2,3,4,5,16,17],
+    "REL": [],
+    "SW": []
+  },
+
+  "inputs": [
+    "CHANGEME (Device name from libinput list-devices goes here)"
+  ],
+  
+  "mappings": [
+    {
+      "type": 3,
+      "io": [105, 106, 0],
+      "desc": "left right -> xbox left stick horizontal (ABS_X)",
+      "attrs": [0, -32767,32767]
+    },
+    {
+      "type": 3,
+      "io": [103, 108, 1],
+      "desc": "up down -> xbox left stick vertical (ABS_Y)",
+      "attrs": [0, -32767,32767]
+    },
+    {
+      "type": 1,
+      "io": [31, 304],
+      "desc": "s -> xbox A button (BTN_SOUTH)",
+      "attrs": [0]
+    },
+    {
+      "type": 1,
+      "io": [32, 305],
+      "desc": "d -> xbox B button (BTN_EAST)",
+      "attrs": [0]
+    },
+    {
+      "type": 1,
+      "io": [17, 308],
+      "desc": "w -> xbox Y button (BTN_WEST)",
+      "attrs": [0]
+    },
+    {
+      "type": 1,
+      "io": [30, 307],
+      "desc": "a -> xbox X button (BTN_NORTH)",
+      "attrs": [0]
+    },
+    {
+      "type": 2,
+      "io": [44, 2],
+      "desc": "z -> xbox left trigger as a binary signal (ABS_Z)",
+      "attrs": [0, 1000]
+    },
+    {
+      "type": 4,
+      "io": [13, 12, 3],
+      "desc": "- = -> xbox right joystck horizontal as incremental signal (ABS_RX)",
+      "attrs": [0, -32767, 32767, 8192]
+    }
+  ]
+}

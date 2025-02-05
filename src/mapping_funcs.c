@@ -6,7 +6,7 @@
 void key2btn(struct input_event* event, int fd, struct map* mapping, int updated_device) {
   if (event->type == EV_KEY && event->code == mapping->io[0] && updated_device == mapping->attrs[0]) {
     if (event->value == 0 || event->value == 1) {
-      // printf("Recieved %d with status %d, pressing %d\n", mapping->io[0], event->value, mapping->io[1]);
+      printf("Recieved %d with status %d, pressing %d\n", mapping->io[0], event->value, mapping->io[1]);
       emit(fd, EV_KEY, mapping->io[1], event->value);
     }
   }
@@ -16,7 +16,7 @@ void key2abs(struct input_event* event, int fd, struct map* mapping, int updated
   if (event->type == EV_KEY && event->code == mapping->io[0] && updated_device == mapping->attrs[0]) {
     if (event->value == 0 || event->value == 1) {
       int new_value = event->value*mapping->attrs[1];
-      // printf("value is now %d for %d\n", new_value, mapping->io[1]);
+      printf("value is now %d for %d\n", new_value, mapping->io[1]);
       emit(fd, EV_ABS, mapping->io[1], new_value);
     }
   }
@@ -48,7 +48,7 @@ void keys2abs(struct input_event* event, int fd, struct map* mapping, int update
         new_value = 0;
       }
 
-      // printf("value is now %d for %d\n", new_value, mapping->io[2]);
+      printf("value is now %d for %d\n", new_value, mapping->io[2]);
       emit(fd, EV_ABS, mapping->io[2], new_value);
     }
   }
@@ -79,7 +79,7 @@ void incrementabs(struct input_event* event, int fd, struct map* mapping, int up
         }
       }
 
-      // printf("value is now %d for %d\n", now_val, mapping->io[2]);
+      printf("value is now %d for %d\n", now_val, mapping->io[2]);
       emit(fd, EV_ABS, mapping->io[2], now_val);
     }
   }

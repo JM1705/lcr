@@ -121,8 +121,9 @@ int* validate_input_devices(LIBINPUT_DEVICES_ARRAY* devarr, struct maps_config* 
   return device_indices;
 }
 
-int main(void) {
-  struct maps_config* config = load_json("mappings/testmap.json");
+int main(int argc, char **argv) {
+  if (argc != 2) {printf("Please pass the location of the JSON configuration file as a command line argument\n"); return 0;}
+  struct maps_config* config = load_json(argv[1]);
   printf("map count: %d\n", config->map_count);
 
   LIBINPUT_DEVICES_ARRAY* devarr = get_devices();
