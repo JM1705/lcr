@@ -1,4 +1,6 @@
-# Light Control Remapper
+# [Migrated] Light Control Remapper
+
+## This project has been migrated to [Codeberg](https://codeberg.org/cloudsinspace/lcr)
 
 CLI (and hopefully GUI in the future) program to emulate a virtual controller with other devices (e.g. keyboard, mouse, etc)
 
